@@ -2,7 +2,9 @@
 // a simple interface. Sorry! -wwwtyro
 // https://github.com/wwwtyro/perlin.js
 
-function Perlin(seed) {
+function Perlin(seed,useSimplex) {
+    seed = seed || '';
+    useSimplex = !!useSimplex;
     
 // Alea random number generator.
 //----------------------------------------------------------------------------//
@@ -299,6 +301,9 @@ function Perlin(seed) {
     };
 
     ClassicalNoise.prototype.noise = function(x, y, z) { 
+      x = x || 0;
+      y = y || 0;
+      z = z || 0;
       // Find unit grid cell containing point 
       var X = Math.floor(x); 
       var Y = Math.floor(y); 
@@ -366,10 +371,9 @@ function Perlin(seed) {
 
     var rand = {};
     rand.random = new Alea(seed);
-    var noise = new ClassicalNoise(rand);
-    
+    var noise = useSimplex ? new SimplexNoise(rand) : new ClassicalNoise(rand);
     this.noise = function (x, y, z) {
-        return 0.5 * noise.noise(x, y, z) + 0.5;
+        return 0.5 * noise['noise' + ((useSimplex && z != 0 && z != undefined) ? '3d' : '')](x, y, z) + 0.5;
     }
     
 }
